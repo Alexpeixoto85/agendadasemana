@@ -218,7 +218,7 @@
             flex-direction: column;
             justify-content: space-between; /* Distribui o espaço melhor */
             align-items: center;
-            padding: 20px 25px; /* Reduzido de 30px para 20px */
+            padding: 15px 25px; /* *** ALTERADO: Reduzido de 20px 25px */
             box-sizing: border-box;
             transition: all 0.3s ease-in-out;
             position: relative; 
@@ -244,9 +244,9 @@
         
         #output-logo {
             display: none; /* Escondido por padrão */
-            max-width: 60%; /* REDUZIDO de 80% para 60% */
-            max-height: 120px; /* REDUZIDO de 180px para 120px */
-            margin: 10px auto 15px auto; /* Margens ajustadas */
+            max-width: 55%; /* *** ALTERADO: Reduzido de 60% */
+            max-height: 100px; /* *** ALTERADO: Reduzido de 120px */
+            margin: 5px auto 10px auto; /* *** ALTERADO: Margens reduzidas */
             object-fit: contain; 
             z-index: 2; /* Garante que fique acima do fundo */
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
@@ -254,7 +254,7 @@
         
         #output-title {
             font-weight: 300;
-            font-size: 2rem;
+            font-size: 1.8rem; /* *** ALTERADO: Reduzido de 2rem */
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 0;
@@ -264,66 +264,75 @@
         
         #output-subtitle {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.0rem; /* *** ALTERADO: Reduzido de 1.1rem */
             margin-top: 5px;
-            margin-bottom: 15px; /* Reduzido de 25px para 15px */
+            margin-bottom: 10px; /* *** ALTERADO: Reduzido de 15px */
             z-index: 2;
             text-align: center;
         }
 
         #schedule-list {
             width: 100%;
-            margin-top: 10px; /* Reduzido de 15px para 10px */
+            margin-top: 5px; /* *** ALTERADO: Reduzido de 10px */
             z-index: 2;
             flex-grow: 1; /* Permite que cresça para ocupar espaço disponível */
             display: flex;
             flex-direction: column;
             justify-content: center; /* Centraliza verticalmente */
+            overflow-y: auto; /* Permite rolar se houver muitos itens */
+            -ms-overflow-style: none; /* IE e Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        #schedule-list::-webkit-scrollbar {
+            display: none; /* Chrome, Safari e Opera */
         }
         
         #output-footer {
-            font-size: 0.8rem;
+            font-size: 0.75rem; /* *** ALTERADO: Reduzido de 0.8rem */
             font-weight: 500;
-            margin-top: 15px; /* Reduzido de 25px para 15px */
+            margin-top: 10px; /* *** ALTERADO: Reduzido de 15px */
             text-align: center;
             z-index: 2;
             width: 100%;
             box-sizing: border-box;
             padding: 0 10px;
-            max-height: 40px; /* Limita a altura para não cortar */
-            overflow: hidden; /* Garante que não ultrapasse o limite */
+            /* *** REMOVIDO: max-height: 40px; */
+            /* *** REMOVIDO: overflow: hidden; */
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0; /* *** ADICIONADO: Impede o rodapé de encolher */
+            line-height: 1.2; /* *** ADICIONADO: Controla a altura */
         }
 
         /* --- ESTILOS DINÂMICOS: LAYOUTS --- */
         
-        .layout-pill #output-title { font-size: 2.2rem; }
+        .layout-pill #output-title { font-size: 2.0rem; } /* *** ALTERADO: Reduzido de 2.2rem */
         .layout-pill #output-subtitle { display: none; }
         .layout-pill .day-card {
             background-color: var(--card-color);
             color: var(--card-text-color);
-            padding: 14px 20px;
+            padding: 12px 18px; /* *** ALTERADO: Reduzido de 14px 20px */
             border-radius: 50px; 
-            margin: 8px auto; /* Reduzido de 10px para 8px */
+            margin: 6px auto; /* *** ALTERADO: Reduzido de 8px */
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1.0rem; /* *** ALTERADO: Reduzido de 1.1rem */
             text-align: center;
             width: 90%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             text-transform: uppercase;
         }
 
-        .layout-tag #output-title { font-size: 1.8rem; letter-spacing: 0; }
-        .layout-tag #output-subtitle { font-size: 1rem; text-transform: uppercase; }
+        .layout-tag #output-title { font-size: 1.6rem; letter-spacing: 0; } /* *** ALTERADO: Reduzido de 1.8rem */
+        .layout-tag #output-subtitle { font-size: 0.9rem; text-transform: uppercase; } /* *** ALTERADO: Reduzido de 1rem */
         .layout-tag .day-card {
             background-color: var(--card-color);
             color: var(--card-text-color);
-            padding: 8px 15px; /* Reduzido o padding vertical e horizontal */
+            padding: 8px 15px; 
             border-radius: 50px; 
-            margin: 6px auto; /* Reduzido de 8px para 6px */
-            font-size: 0.9rem; /* Reduzido o tamanho da fonte */
+            margin: 4px auto; /* *** ALTERADO: Reduzido de 6px */
+            font-size: 0.9rem; 
             text-align: left;
             width: 100%;
             display: flex;
@@ -335,10 +344,10 @@
             background-color: var(--accent-color);
             color: var(--accent-text-color);
             border-radius: 30px;
-            padding: 4px 10px; /* Reduzido o padding */
-            font-size: 0.8rem; /* Reduzido o tamanho da fonte */
+            padding: 4px 10px; 
+            font-size: 0.8rem; 
             font-weight: 600;
-            margin-right: 12px; /* Reduzido o margin */
+            margin-right: 12px; 
         }
         
         .layout-tag .day-times {
@@ -372,7 +381,7 @@
         }
 
         .layout-pill.palette-excelencia #output-title {
-            font-size: 2.0rem; /* Original era 2.2rem */
+            font-size: 1.8rem; /* *** ALTERADO: Reduzido de 2.0rem */
             text-align: center; /* Garantia de centralização */
         }
 
