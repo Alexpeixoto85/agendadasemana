@@ -1,0 +1,952 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gerador de Agenda</title>
+    
+    <!-- Carregamento mais robusto do html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS GERAIS (Look & Feel do iOS) --- */
+        :root {
+            font-size: 16px;
+            --ios-blue: #007aff;
+            --ios-light-gray: #f0f0f7;
+            --ios-border: #dcdce1;
+            --ios-white: #ffffff;
+            --ios-text: #333;
+            --ios-text-dark: #000;
+            --ios-text-secondary: #555;
+            
+            /* Variável para opacidade do fundo, usada no novo <img> */
+            --custom-bg-opacity: 1; 
+        }
+
+        .font-logo {
+            font-family: "Bodoni Moda", "Times New Roman", Times, serif;
+            font-weight: 700; 
+            font-optical-sizing: auto;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--ios-light-gray);
+            margin: 0;
+            padding: 20px;
+            color: var(--ios-text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            font-weight: 600;
+            color: var(--ios-text-dark);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--ios-border);
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+
+        /* --- SEÇÃO DE CONFIGURAÇÕES (Inputs) --- */
+        .settings-card {
+            background-color: var(--ios-white);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--ios-text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid var(--ios-border);
+            border-radius: 8px;
+            box-sizing: border-box; 
+            -webkit-appearance: none;
+        }
+        
+        .input-group input[type="text"]:focus {
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
+            outline: none;
+        }
+
+        /* --- BOTÕES GERAIS --- */
+        .button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .button-primary {
+            background-color: var(--ios-blue);
+            color: var(--ios-white);
+            box-shadow: 0 2px 5px rgba(0,122,255,0.3);
+        }
+        .button-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .button-secondary {
+            background-color: #e5e5ea;
+            color: var(--ios-text-dark);
+        }
+        .button-secondary:hover {
+            background-color: var(--ios-border);
+        }
+        
+
+        /* --- SELETORES DE OPÇÕES (Layout e Paleta) --- */
+        .option-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-selector input[type="radio"] {
+            display: none; 
+        }
+
+        .option-selector label {
+            display: block;
+            background-color: var(--ios-light-gray);
+            color: var(--ios-text);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-selector input[type="radio"]:checked + label {
+            background-color: var(--ios-blue);
+            color: var(--ios-white);
+            box-shadow: 0 2px 5px rgba(0,122,255,0.3);
+        }
+
+        /* --- CONTROLES DE PLANO DE FUNDO E LOGO --- */
+        .file-upload-label {
+            background-color: #e5e5ea;
+            color: var(--ios-text-dark);
+            margin-bottom: 10px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--ios-border);
+            border-radius: 5px;
+            outline: none;
+            margin-top: 5px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--ios-white);
+            border-radius: 50%;
+            border: 1px solid var(--ios-border);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+
+        /* --- SEÇÃO DA PRÉ-VISUALIZAÇÃO (Output) --- */
+        .preview-container {
+            margin-top: 30px;
+        }
+        
+        #download-btn {
+            margin: 15px 0;
+        }
+
+        #story-output {
+            width: 100%;
+            aspect-ratio: 9 / 16; /* Proporção exata de um Story */
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden; /* Importante para o <img> de fundo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 25px;
+            box-sizing: border-box;
+            transition: all 0.3s ease-in-out;
+            position: relative; 
+            z-index: 1; /* Precisa ter z-index para o z-index -1 do fundo funcionar */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        /* NOVO: Estilo para a tag <img> que servirá de fundo */
+        #output-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Garante que a imagem cubra tudo sem distorcer */
+            z-index: -1; /* Fica atrás de todo o conteúdo */
+            border-radius: inherit; /* Herda o arredondamento do pai */
+            opacity: var(--custom-bg-opacity, 1); /* Usa a variável do slider */
+            transition: opacity 0.2s;
+        }
+        
+        #output-logo {
+            display: none; /* Escondido por padrão */
+            max-width: 60%; 
+            max-height: 100px; 
+            margin: 0 auto 15px auto; 
+            object-fit: contain; 
+            z-index: 2; /* Garante que fique acima do fundo */
+        }
+        
+        #output-title {
+            font-weight: 300;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            z-index: 2; 
+        }
+        
+        #output-subtitle {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 5px;
+            margin-bottom: 25px;
+            z-index: 2;
+        }
+
+        #schedule-list {
+            width: 100%;
+            margin-top: 15px;
+            z-index: 2;
+        }
+        
+        #output-footer {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 25px; 
+            text-align: center;
+            z-index: 2;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+
+        /* --- ESTILOS DINÂMICOS: LAYOUTS --- */
+        
+        .layout-pill #output-title { font-size: 2.2rem; }
+        .layout-pill #output-subtitle { display: none; }
+        .layout-pill .day-card {
+            background-color: var(--card-color);
+            color: var(--card-text-color);
+            padding: 14px 20px;
+            border-radius: 50px; 
+            margin: 10px auto;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            width: 90%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-transform: uppercase;
+        }
+
+        .layout-tag #output-title { font-size: 1.8rem; letter-spacing: 0; }
+        .layout-tag #output-subtitle { font-size: 1rem; text-transform: uppercase; }
+        .layout-tag .day-card {
+            background-color: var(--card-color);
+            color: var(--card-text-color);
+            padding: 8px 15px; /* Reduzido o padding vertical e horizontal */
+            border-radius: 50px; 
+            margin: 8px auto; /* Reduzido o margin */
+            font-size: 0.9rem; /* Reduzido o tamanho da fonte */
+            text-align: left;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .layout-tag .day-tag {
+            background-color: var(--accent-color);
+            color: var(--accent-text-color);
+            border-radius: 30px;
+            padding: 4px 10px; /* Reduzido o padding */
+            font-size: 0.8rem; /* Reduzido o tamanho da fonte */
+            font-weight: 600;
+            margin-right: 12px; /* Reduzido o margin */
+        }
+        
+        .layout-tag .day-times {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        /* --- ESTILOS DINÂMICOS: PALETAS DE CORES --- */
+        
+        /* Paleta Excelência */
+        .palette-excelencia {
+            --bg-color: #fcfaf8;
+            --text-color: #382e25;
+            --card-color: #ffffff;
+            --card-text-color: #382e25;
+            --accent-color: #c0a47c;
+            --accent-text-color: #ffffff;
+            font-family: "Bodoni Moda", "Times New Roman", Times, serif; 
+        }
+        .palette-excelencia #output-title,
+        .palette-excelencia #output-subtitle {
+             font-family: "Bodoni Moda", "Times New Roman", Times, serif;
+             font-weight: 700;
+        }
+        .palette-excelencia #output-subtitle {
+            color: var(--accent-color);
+        }
+        .palette-excelencia.layout-pill .day-card {
+            background-color: var(--accent-color);
+            color: var(--accent-text-color);
+        }
+
+        .layout-pill.palette-excelencia #output-title {
+            font-size: 2.0rem; /* Original era 2.2rem */
+            text-align: center; /* Garantia de centralização */
+        }
+
+        /* Paleta 1: Verde Moderno */
+        .palette-verde {
+            --bg-color: #f7f7f7;
+            --text-color: #3d5e50;
+            --card-color: #ffffff;
+            --card-text-color: #3d5e50;
+            --accent-color: #3d5e50;
+            --accent-text-color: #ffffff;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .palette-verde #output-title { font-weight: 300; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; }
+        
+        /* Paleta 2: Rosa Elegante */
+        .palette-rosa {
+            --bg-color: #fdf6f7;
+            --text-color: #7d4a58;
+            --card-color: #ffffff;
+            --card-text-color: #7d4a58;
+            --accent-color: #d88a9e;
+            --accent-text-color: #ffffff;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .palette-rosa #output-title { font-weight: 700; font-family: 'Times New Roman', Times, serif; }
+        .palette-rosa #output-subtitle { color: #d88a9e; }
+
+        /* Paleta 3: Azul Profissional */
+        .palette-azul {
+            --bg-color: #f5f8fa;
+            --text-color: #2c3e50;
+            --card-color: #ffffff;
+            --card-text-color: #2c3e50;
+            --accent-color: #3498db;
+            --accent-text-color: #ffffff;
+        }
+        .palette-azul #output-title,
+        .palette-azul #output-subtitle {
+             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+             font-weight: 600;
+        }
+
+        /* Paleta 4: Modo Escuro */
+        .palette-dark {
+            --bg-color: #1c1c1e;
+            --text-color: #f2f2f7;
+            --card-color: #2c2c2e;
+            --card-text-color: #f2f2f7;
+            --accent-color: #007aff;
+            --accent-text-color: #ffffff;
+        }
+        .palette-dark #output-title,
+        .palette-dark #output-subtitle {
+             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+             font-weight: 600;
+        }
+        .palette-dark #output-subtitle { color: #007aff; }
+
+        /* Loading indicator */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: var(--ios-blue);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gerador de Agenda</h1>
+
+        <div class="settings-card">
+            <h2>Horários da Semana</h2>
+            <div class="input-group">
+                <label for="dia-seg">Segunda</label>
+                <input type="text" id="dia-seg" placeholder="Ex: 9h, 14h, 18h">
+            </div>
+            <div class="input-group">
+                <label for="dia-ter">Terça</label>
+                <input type="text" id="dia-ter" placeholder="Ex: 10h - 12h, 14h - 18h">
+            </div>
+            <div class="input-group">
+                <label for="dia-qua">Quarta</label>
+                <input type="text" id="dia-qua" placeholder="Ex: 9h, 14h">
+            </div>
+            <div class="input-group">
+                <label for="dia-qui">Quinta</label>
+                <input type="text" id="dia-qui" placeholder="Ex: 14h - 19h">
+            </div>
+            <div class="input-group">
+                <label for="dia-sex">Sexta</label>
+                <input type="text" id="dia-sex" placeholder="Ex: 9h, 13h, 17h">
+            </div>
+            <div class="input-group">
+                <label for="dia-sab">Sábado</label>
+                <input type="text" id="dia-sab" placeholder="Ex: 8h - 12h">
+            </div>
+             <div class="input-group">
+                <label for="dia-dom">Domingo</label>
+                <input type="text" id="dia-dom" placeholder="Ex: Fechado">
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h2>Layout e Cores</h2>
+            <label class="input-group">Escolha o Layout</label>
+            <div class="option-selector">
+                <input type="radio" id="layout-pill" name="layout" value="pill" checked>
+                <label for="layout-pill">Modelo Pílula</label>
+
+                <input type="radio" id="layout-tag" name="layout" value="tag">
+                <label for="layout-tag">Modelo Tag</label>
+            </div>
+
+            <label class="input-group" style="margin-top: 15px;">Escolha a Paleta</label>
+            <div class="option-selector">
+                <input type="radio" id="palette-excelencia" name="palette" value="excelencia">
+                <label for="palette-excelencia">Excelência</label>
+                
+                <input type="radio" id="palette-verde" name="palette" value="verde" checked>
+                <label for="palette-verde">Verde Moderno</label>
+                
+                <input type="radio" id="palette-rosa" name="palette" value="rosa">
+                <label for="palette-rosa">Rosa Elegante</label>
+                
+                <input type="radio" id="palette-azul" name="palette" value="azul">
+                <label for="palette-azul">Azul Pro</label>
+                
+                <input type="radio" id="palette-dark" name="palette" value="dark">
+                <label for="palette-dark">Modo Escuro</label>
+            </div>
+        </div>
+        
+        <div class="settings-card">
+            <h2>Logomarca</h2>
+            <input type="file" id="logo-upload" accept="image/png, image/jpeg">
+            <label for="logo-upload" class="button file-upload-label">Carregar Logo</label>
+            <button type="button" id="remove-logo" class="button button-secondary" style="margin-top: 10px; width: 100%;">Remover Logo</button>
+        </div>
+        
+        <div class="settings-card">
+            <h2>Plano de Fundo</h2>
+            <input type="file" id="bg-upload" accept="image/*">
+            <label for="bg-upload" class="button file-upload-label">Carregar Imagem</label>
+            
+            <button type="button" id="remove-bg" class="button button-secondary" style="margin-top: 10px; width: 100%;">Remover Imagem</button>
+
+            <label for="bg-opacity" class="input-group" style="margin-top: 20px;">Transparência do Fundo</label>
+            <input type="range" id="bg-opacity" min="0" max="1" step="0.1" value="1">
+        </div>
+
+        <div class="settings-card">
+            <h2>Texto de Rodapé</h2>
+            <div class="input-group">
+                <label for="footer-text">Texto informativo</label>
+                <input type="text" id="footer-text" placeholder="Ex: Agende seu horário!">
+            </div>
+        </div>
+
+
+        <div class="preview-container">
+            <h2>Pré-visualização</h2>
+            <button type="button" id="download-btn" class="button button-primary">Baixar PNG</button>
+            <div id="loading" class="loading">Gerando imagem...</div>
+            
+            <div id="story-output">
+                <img id="output-bg-image" alt="Plano de fundo">
+                
+                <img id="output-logo" alt="Logomarca">
+                
+                <h2 id="output-title"></h2>
+                <span id="output-subtitle"></span>
+                <div id="schedule-list">
+                    </div>
+                <span id="output-footer"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // IDs dos elementos
+        const inputs = {
+            seg: document.getElementById('dia-seg'),
+            ter: document.getElementById('dia-ter'),
+            qua: document.getElementById('dia-qua'),
+            qui: document.getElementById('dia-qui'),
+            sex: document.getElementById('dia-sex'),
+            sab: document.getElementById('dia-sab'),
+            dom: document.getElementById('dia-dom')
+        };
+        
+        const storyOutput = document.getElementById('story-output');
+        const outputTitle = document.getElementById('output-title');
+        const outputSubtitle = document.getElementById('output-subtitle');
+        const scheduleList = document.getElementById('schedule-list');
+        
+        const footerInput = document.getElementById('footer-text');
+        const outputFooter = document.getElementById('output-footer');
+        
+        const layoutRadios = document.getElementsByName('layout');
+        const paletteRadios = document.getElementsByName('palette');
+
+        // Elementos do Plano de Fundo
+        const bgUpload = document.getElementById('bg-upload');
+        const bgOpacitySlider = document.getElementById('bg-opacity');
+        const removeBgBtn = document.getElementById('remove-bg');
+        const downloadBtn = document.getElementById('download-btn');
+        const outputBgImage = document.getElementById('output-bg-image');
+        const loadingIndicator = document.getElementById('loading');
+        
+        // Elementos da Logo
+        const logoUpload = document.getElementById('logo-upload');
+        const removeLogoBtn = document.getElementById('remove-logo');
+        const outputLogo = document.getElementById('output-logo');
+
+        // Nomes dos dias
+        const dayNames = {
+            seg: 'Segunda', ter: 'Terça', qua: 'Quarta', qui: 'Quinta',
+            sex: 'Sexta', sab: 'Sábado', dom: 'Domingo'
+        };
+        const dayAbbr = {
+            seg: 'SEG', ter: 'TER', qua: 'QUA', qui: 'QUI',
+            sex: 'SEX', sab: 'SÁB', dom: 'DOM'
+        };
+
+        function updatePreview() {
+            const layout = document.querySelector('input[name="layout"]:checked').value;
+            const palette = document.querySelector('input[name="palette"]:checked').value;
+            
+            storyOutput.className = ''; 
+            storyOutput.classList.add('layout-' + layout);
+            storyOutput.classList.add('palette-' + palette);
+            
+            const style = getComputedStyle(storyOutput);
+            storyOutput.style.backgroundColor = style.getPropertyValue('--bg-color');
+            storyOutput.style.color = style.getPropertyValue('--text-color');
+
+            scheduleList.innerHTML = '';
+            
+            outputTitle.innerText = "Agenda da Semana";
+            outputSubtitle.innerText = (layout === 'tag') ? "PARA ESTA SEMANA!" : "";
+
+            for (const key in dayNames) {
+                const time = inputs[key].value;
+                if (time) { 
+                    const card = document.createElement('div');
+                    card.className = 'day-card';
+                    
+                    if (layout === 'pill') {
+                        card.innerText = `${dayAbbr[key]} | ${time}`;
+                    } else { // layout === 'tag'
+                        const timesText = time.replace(/-/g, ' '); 
+                        card.innerHTML = `<span class="day-tag">${dayNames[key]}</span> <span class="day-times">${timesText}</span>`;
+                    }
+                    scheduleList.appendChild(card);
+                }
+            }
+            
+            outputFooter.innerText = footerInput.value;
+            
+            saveInputs();
+        }
+        
+        // --- Funções de Salvar e Carregar ---
+
+        function saveInputs() {
+            for (const key in inputs) {
+                localStorage.setItem('agenda_generator_' + key, inputs[key].value);
+            }
+            localStorage.setItem('agenda_generator_footer', footerInput.value);
+            
+            // Salvar opacidade do fundo
+            localStorage.setItem('agenda_generator_bg_opacity', bgOpacitySlider.value);
+            
+            // Salvar layout e paleta selecionados
+            const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
+            const selectedPalette = document.querySelector('input[name="palette"]:checked').value;
+            localStorage.setItem('agenda_generator_layout', selectedLayout);
+            localStorage.setItem('agenda_generator_palette', selectedPalette);
+        }
+
+        function loadInputs() {
+            for (const key in inputs) {
+                const savedValue = localStorage.getItem('agenda_generator_' + key);
+                if (savedValue) {
+                    inputs[key].value = savedValue;
+                }
+            }
+            const savedFooter = localStorage.getItem('agenda_generator_footer');
+            if (savedFooter) {
+                footerInput.value = savedFooter;
+            }
+            
+            // Carregar opacidade do fundo
+            const savedOpacity = localStorage.getItem('agenda_generator_bg_opacity');
+            if (savedOpacity) {
+                bgOpacitySlider.value = savedOpacity;
+                storyOutput.style.setProperty('--custom-bg-opacity', savedOpacity);
+            }
+            
+            // Carregar layout e paleta selecionados
+            const savedLayout = localStorage.getItem('agenda_generator_layout');
+            const savedPalette = localStorage.getItem('agenda_generator_palette');
+            
+            if (savedLayout) {
+                document.getElementById(`layout-${savedLayout}`).checked = true;
+            }
+            
+            if (savedPalette) {
+                document.getElementById(`palette-${savedPalette}`).checked = true;
+            }
+            
+            // Carregar imagem de fundo
+            const savedBgImage = localStorage.getItem('agenda_generator_bg_image');
+            if (savedBgImage) {
+                outputBgImage.src = savedBgImage;
+            }
+            
+            // Carregar logo
+            const savedLogo = localStorage.getItem('agenda_generator_logo');
+            if (savedLogo) {
+                outputLogo.src = savedLogo;
+                outputLogo.style.display = 'block';
+            }
+        }
+
+        // --- Funções de Fundo, Logo e Download ---
+
+        function handleBgUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                outputBgImage.src = e.target.result;
+                localStorage.setItem('agenda_generator_bg_image', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleOpacityChange(event) {
+            storyOutput.style.setProperty('--custom-bg-opacity', event.target.value);
+            localStorage.setItem('agenda_generator_bg_opacity', event.target.value);
+        }
+
+        function handleRemoveBg() {
+            outputBgImage.src = '';
+            bgUpload.value = null; 
+            localStorage.removeItem('agenda_generator_bg_image');
+        }
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                outputLogo.src = e.target.result;
+                outputLogo.style.display = 'block';
+                localStorage.setItem('agenda_generator_logo', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleRemoveLogo() {
+            outputLogo.src = '';
+            outputLogo.style.display = 'none'; 
+            logoUpload.value = null; 
+            localStorage.removeItem('agenda_generator_logo');
+        }
+
+        async function downloadAsPNG() {
+            // Remove o foco de qualquer input para não sair na imagem
+            document.activeElement.blur(); 
+            
+            // Mostra indicador de carregamento
+            loadingIndicator.style.display = 'block';
+            downloadBtn.disabled = true;
+            
+            try {
+                // Verifica se html2canvas está disponível
+                if (typeof html2canvas === 'undefined') {
+                    throw new Error('html2canvas não carregado');
+                }
+                
+                // Salva o estado atual
+                const originalBoxShadow = storyOutput.style.boxShadow;
+                const originalTransform = storyOutput.style.transform;
+                
+                // Remove a sombra temporariamente e ajusta para captura
+                storyOutput.style.boxShadow = 'none';
+                storyOutput.style.transform = 'translateZ(0)'; // Força aceleração de hardware
+                
+                // Aguarda um frame para garantir que a renderização foi atualizada
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                const canvas = await html2canvas(storyOutput, {
+                    scale: 3,
+                    useCORS: true,
+                    backgroundColor: null,
+                    allowTaint: false,
+                    logging: false,
+                    width: storyOutput.offsetWidth,
+                    height: storyOutput.offsetHeight,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0,
+                    onclone: function(clonedDoc) {
+                        const clonedOutput = clonedDoc.getElementById('story-output');
+                        if (clonedOutput) {
+                            clonedOutput.style.boxShadow = 'none';
+                            clonedOutput.style.transform = 'translateZ(0)';
+                        }
+                    }
+                });
+                
+                // Restaura os estilos originais
+                storyOutput.style.boxShadow = originalBoxShadow;
+                storyOutput.style.transform = originalTransform;
+                
+                // Cria um link temporário para o download
+                const link = document.createElement('a');
+                link.download = 'agenda-da-semana.png';
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+            } catch (error) {
+                console.error('Erro ao gerar o PNG:', error);
+                
+                // Fallback melhorado que tenta recriar visualmente a agenda
+                try {
+                    await generateFallbackImage();
+                } catch (fallbackError) {
+                    console.error('Erro no fallback:', fallbackError);
+                    alert('Não foi possível gerar a imagem. Verifique sua conexão com a internet e tente novamente.');
+                }
+            } finally {
+                // Esconde indicador de carregamento
+                loadingIndicator.style.display = 'none';
+                downloadBtn.disabled = false;
+            }
+        }
+
+        // Função de fallback melhorada
+        async function generateFallbackImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Define o tamanho do canvas
+            const width = 1080;
+            const height = 1920;
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Obtém as cores atuais
+            const computedStyle = getComputedStyle(storyOutput);
+            const bgColor = computedStyle.backgroundColor;
+            const textColor = computedStyle.color;
+            const accentColor = computedStyle.getPropertyValue('--accent-color') || '#007aff';
+            
+            // Preenche o fundo
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Adiciona título
+            ctx.fillStyle = textColor;
+            ctx.font = 'bold 80px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Agenda da Semana', width / 2, 200);
+            
+            // Adiciona subtítulo se existir
+            const subtitle = outputSubtitle.textContent;
+            if (subtitle) {
+                ctx.font = '40px Arial';
+                ctx.fillStyle = accentColor;
+                ctx.fillText(subtitle, width / 2, 280);
+            }
+            
+            // Adiciona os horários
+            let yPosition = 400;
+            const dayCards = scheduleList.querySelectorAll('.day-card');
+            
+            for (const card of dayCards) {
+                const cardStyle = getComputedStyle(card);
+                const cardBg = cardStyle.backgroundColor;
+                const cardText = cardStyle.color;
+                
+                // Desenha o card
+                ctx.fillStyle = cardBg;
+                ctx.beginPath();
+                ctx.roundRect(100, yPosition, width - 200, 80, 40);
+                ctx.fill();
+                
+                // Texto do card
+                ctx.fillStyle = cardText;
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(card.textContent || card.innerText, 150, yPosition + 50);
+                
+                yPosition += 100;
+            }
+            
+            // Adiciona rodapé
+            const footer = outputFooter.textContent;
+            if (footer) {
+                ctx.fillStyle = textColor;
+                ctx.font = '25px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(footer, width / 2, height - 100);
+            }
+            
+            // Adiciona logo se existir
+            if (outputLogo.style.display !== 'none' && outputLogo.src) {
+                const img = new Image();
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = outputLogo.src;
+                });
+                
+                const logoHeight = 150;
+                const logoWidth = (img.width * logoHeight) / img.height;
+                ctx.drawImage(img, (width - logoWidth) / 2, 50, logoWidth, logoHeight);
+            }
+            
+            // Adiciona plano de fundo se existir
+            if (outputBgImage.src) {
+                const bgImg = new Image();
+                await new Promise((resolve, reject) => {
+                    bgImg.onload = resolve;
+                    bgImg.onerror = reject;
+                    bgImg.src = outputBgImage.src;
+                });
+                
+                // Aplica opacidade
+                ctx.globalAlpha = parseFloat(getComputedStyle(storyOutput).getPropertyValue('--custom-bg-opacity') || 1);
+                ctx.drawImage(bgImg, 0, 0, width, height);
+                ctx.globalAlpha = 1.0;
+            }
+            
+            // Faz o download
+            const link = document.createElement('a');
+            link.download = 'agenda-da-semana-fallback.png';
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- Event Listeners ---
+        
+        for (const key in inputs) {
+            inputs[key].addEventListener('input', updatePreview);
+        }
+        
+        layoutRadios.forEach(radio => radio.addEventListener('change', () => {
+            updatePreview();
+            saveInputs();
+        }));
+        
+        paletteRadios.forEach(radio => radio.addEventListener('change', () => {
+            updatePreview();
+            saveInputs();
+        }));
+
+        bgUpload.addEventListener('change', handleBgUpload);
+        bgOpacitySlider.addEventListener('input', handleOpacityChange);
+        removeBgBtn.addEventListener('click', handleRemoveBg);
+        downloadBtn.addEventListener('click', downloadAsPNG);
+
+        // Event Listeners para a Logo
+        logoUpload.addEventListener('change', handleLogoUpload);
+        removeLogoBtn.addEventListener('click', handleRemoveLogo);
+        
+        footerInput.addEventListener('input', updatePreview);
+
+        // --- Inicialização ---
+        loadInputs();
+        updatePreview();
+        
+    </script>
+</body>
+</html>
