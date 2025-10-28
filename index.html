@@ -216,9 +216,9 @@
             overflow: hidden; /* Importante para o <img> de fundo */
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between; /* Distribui o espaço melhor */
             align-items: center;
-            padding: 30px 25px;
+            padding: 20px 25px; /* Reduzido de 30px para 20px */
             box-sizing: border-box;
             transition: all 0.3s ease-in-out;
             position: relative; 
@@ -244,9 +244,9 @@
         
         #output-logo {
             display: none; /* Escondido por padrão */
-            max-width: 80%; /* AUMENTADO de 60% para 80% */
-            max-height: 180px; /* AUMENTADO de 100px para 180px */
-            margin: 0 auto 25px auto; /* Aumentado o margin-bottom */
+            max-width: 60%; /* REDUZIDO de 80% para 60% */
+            max-height: 120px; /* REDUZIDO de 180px para 120px */
+            margin: 10px auto 15px auto; /* Margens ajustadas */
             object-fit: contain; 
             z-index: 2; /* Garante que fique acima do fundo */
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
@@ -259,31 +259,42 @@
             letter-spacing: 1px;
             margin: 0;
             z-index: 2; 
+            text-align: center;
         }
         
         #output-subtitle {
             font-weight: 700;
             font-size: 1.1rem;
             margin-top: 5px;
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Reduzido de 25px para 15px */
             z-index: 2;
+            text-align: center;
         }
 
         #schedule-list {
             width: 100%;
-            margin-top: 15px;
+            margin-top: 10px; /* Reduzido de 15px para 10px */
             z-index: 2;
+            flex-grow: 1; /* Permite que cresça para ocupar espaço disponível */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centraliza verticalmente */
         }
         
         #output-footer {
             font-size: 0.8rem;
             font-weight: 500;
-            margin-top: 25px; 
+            margin-top: 15px; /* Reduzido de 25px para 15px */
             text-align: center;
             z-index: 2;
             width: 100%;
             box-sizing: border-box;
             padding: 0 10px;
+            max-height: 40px; /* Limita a altura para não cortar */
+            overflow: hidden; /* Garante que não ultrapasse o limite */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* --- ESTILOS DINÂMICOS: LAYOUTS --- */
@@ -295,7 +306,7 @@
             color: var(--card-text-color);
             padding: 14px 20px;
             border-radius: 50px; 
-            margin: 10px auto;
+            margin: 8px auto; /* Reduzido de 10px para 8px */
             font-weight: 600;
             font-size: 1.1rem;
             text-align: center;
@@ -311,7 +322,7 @@
             color: var(--card-text-color);
             padding: 8px 15px; /* Reduzido o padding vertical e horizontal */
             border-radius: 50px; 
-            margin: 8px auto; /* Reduzido o margin */
+            margin: 6px auto; /* Reduzido de 8px para 6px */
             font-size: 0.9rem; /* Reduzido o tamanho da fonte */
             text-align: left;
             width: 100%;
@@ -891,241 +902,96 @@
             // Remove o foco de qualquer input para não sair na imagem
             document.activeElement.blur(); 
             
-            // Mostra indicador de carregamento
-            loadingIndicator.innerText = "🔄 Gerando imagem...";
+            // Mostrar indicador de carregamento
             loadingIndicator.style.display = 'block';
             downloadBtn.disabled = true;
             
             try {
-                // Verifica se html2canvas está disponível
-                if (typeof html2canvas === 'undefined') {
-                    throw new Error('html2canvas não carregado');
-                }
-                
-                // Salva o estado atual
-                const originalBoxShadow = storyOutput.style.boxShadow;
-                const originalTransform = storyOutput.style.transform;
-                
-                // Remove a sombra temporariamente e ajusta para captura
-                storyOutput.style.boxShadow = 'none';
-                storyOutput.style.transform = 'translateZ(0)'; // Força aceleração de hardware
-                
-                // Aguarda um frame para garantir que a renderização foi atualizada
+                // Aguardar um frame para garantir que o preview foi atualizado
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
+                // Capturar o elemento
                 const canvas = await html2canvas(storyOutput, {
-                    scale: 3,
-                    useCORS: true,
-                    backgroundColor: null,
+                    scale: 2, // Maior resolução
+                    useCORS: true, // Para imagens externas
                     allowTaint: false,
-                    logging: false,
-                    width: storyOutput.offsetWidth,
-                    height: storyOutput.offsetHeight,
-                    x: 0,
-                    y: 0,
-                    scrollX: 0,
-                    scrollY: 0,
-                    onclone: function(clonedDoc) {
-                        const clonedOutput = clonedDoc.getElementById('story-output');
-                        if (clonedOutput) {
-                            clonedOutput.style.boxShadow = 'none';
-                            clonedOutput.style.transform = 'translateZ(0)';
-                        }
-                        // Garante que imagens de DataURL ou ObjectURL sejam carregadas no clone
-                        const originalLogo = document.getElementById('output-logo');
-                        const clonedLogo = clonedDoc.getElementById('output-logo');
-                        if (originalLogo && clonedLogo && originalLogo.src) {
-                            clonedLogo.src = originalLogo.src;
-                        }
-                        const originalBg = document.getElementById('output-bg-image');
-                        const clonedBg = clonedDoc.getElementById('output-bg-image');
-                        if (originalBg && clonedBg && originalBg.src) {
-                            clonedBg.src = originalBg.src;
-                        }
-                    }
+                    backgroundColor: null // Fundo transparente
                 });
                 
-                // Restaura os estilos originais
-                storyOutput.style.boxShadow = originalBoxShadow;
-                storyOutput.style.transform = originalTransform;
-                
-                // Cria um link temporário para o download
+                // Criar link de download
                 const link = document.createElement('a');
                 link.download = 'agenda-da-semana.png';
                 link.href = canvas.toDataURL('image/png');
-                document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
                 
             } catch (error) {
-                console.error('Erro ao gerar o PNG:', error);
-                
-                // Tenta o fallback
-                try {
-                    await generateFallbackImage();
-                } catch (fallbackError) {
-                    console.error('Erro no fallback:', fallbackError);
-                    alert('Não foi possível gerar a imagem. Verifique sua conexão com a internet e tente novamente.');
-                }
+                console.error('Erro ao gerar imagem:', error);
+                alert('Erro ao gerar a imagem. Tente novamente.');
             } finally {
-                // Esconde indicador de carregamento
+                // Esconder indicador
                 loadingIndicator.style.display = 'none';
                 downloadBtn.disabled = false;
             }
         }
 
-        // Função de fallback melhorada
-        async function generateFallbackImage() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Define o tamanho do canvas
-            const width = 1080;
-            const height = 1920;
-            canvas.width = width;
-            canvas.height = height;
-            
-            // Obtém as cores atuais
-            const computedStyle = getComputedStyle(storyOutput);
-            const bgColor = computedStyle.backgroundColor;
-            const textColor = computedStyle.color;
-            const accentColor = computedStyle.getPropertyValue('--accent-color') || '#007aff';
-            
-            // Preenche o fundo
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, width, height);
-
-            // Adiciona plano de fundo se existir
-            if (outputBgImage.src && outputBgImage.src.startsWith('data:')) {
-                try {
-                    const bgImg = new Image();
-                    await new Promise((resolve, reject) => {
-                        bgImg.onload = resolve;
-                        bgImg.onerror = reject;
-                        bgImg.src = outputBgImage.src;
-                    });
-                    
-                    // Aplica opacidade
-                    ctx.globalAlpha = parseFloat(getComputedStyle(storyOutput).getPropertyValue('--custom-bg-opacity') || 1);
-                    ctx.drawImage(bgImg, 0, 0, width, height);
-                    ctx.globalAlpha = 1.0;
-                } catch (e) {
-                    console.warn("Não foi possível carregar a imagem de fundo no fallback.");
-                }
-            }
-            
-            // Adiciona logo se existir (COM TAMANHO AUMENTADO)
-            if (outputLogo.style.display !== 'none' && outputLogo.src && outputLogo.src.startsWith('data:')) {
-                 try {
-                    const img = new Image();
-                    await new Promise((resolve, reject) => {
-                        img.onload = resolve;
-                        img.onerror = reject;
-                        img.src = outputLogo.src;
-                    });
-                    
-                    // TAMANHO AUMENTADO para a logo
-                    const logoHeight = 250; // Aumentado de 150 para 250
-                    const logoWidth = (img.width * logoHeight) / img.height;
-                    ctx.drawImage(img, (width - logoWidth) / 2, 80, logoWidth, logoHeight); // Posição ajustada
-                } catch (e) {
-                     console.warn("Não foi possível carregar a logo no fallback.");
-                }
-            }
-
-            // Adiciona título
-            ctx.fillStyle = textColor;
-            ctx.font = 'bold 80px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('Agenda da Semana', width / 2, 400);
-            
-            // Adiciona subtítulo se existir
-            const subtitle = outputSubtitle.textContent;
-            if (subtitle) {
-                ctx.font = '40px Arial';
-                ctx.fillStyle = accentColor;
-                ctx.fillText(subtitle, width / 2, 480);
-            }
-            
-            // Adiciona os horários
-            let yPosition = 580;
-            const dayCards = scheduleList.querySelectorAll('.day-card');
-            
-            for (const card of dayCards) {
-                const cardStyle = getComputedStyle(card);
-                const cardBg = cardStyle.backgroundColor;
-                const cardText = cardStyle.color;
-                
-                // Desenha o card
-                ctx.fillStyle = cardBg;
-                ctx.beginPath();
-                ctx.roundRect(100, yPosition, width - 200, 80, 40);
-                ctx.fill();
-                
-                // Texto do card
-                ctx.fillStyle = cardText;
-                ctx.font = '30px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(card.textContent || card.innerText, width / 2, yPosition + 50);
-                
-                yPosition += 100;
-            }
-            
-            // Adiciona rodapé
-            const footer = outputFooter.textContent;
-            if (footer) {
-                ctx.fillStyle = textColor;
-                ctx.font = '25px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(footer, width / 2, height - 100);
-            }
-            
-            // Faz o download
-            const link = document.createElement('a');
-            link.download = 'agenda-da-semana-fallback.png';
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         // --- Event Listeners ---
-        
+
+        // Atualizar preview quando inputs mudarem
         for (const key in inputs) {
             inputs[key].addEventListener('input', updatePreview);
         }
-        
-        layoutRadios.forEach(radio => radio.addEventListener('change', () => {
-            updatePreview();
-            saveInputs();
-        }));
-        
-        paletteRadios.forEach(radio => radio.addEventListener('change', () => {
-            updatePreview();
-            saveInputs();
-        }));
+        footerInput.addEventListener('input', updatePreview);
 
+        // Event listeners para layout e paleta
+        for (const radio of layoutRadios) {
+            radio.addEventListener('change', updatePreview);
+        }
+        for (const radio of paletteRadios) {
+            radio.addEventListener('change', updatePreview);
+        }
+
+        // Event listeners para plano de fundo
         bgUpload.addEventListener('change', handleBgUpload);
         bgOpacitySlider.addEventListener('input', handleOpacityChange);
         removeBgBtn.addEventListener('click', handleRemoveBg);
-        downloadBtn.addEventListener('click', downloadAsPNG);
 
-        // Event Listeners para a Logo
+        // Event listeners para logo
         logoUpload.addEventListener('change', handleLogoUpload);
         removeLogoBtn.addEventListener('click', handleRemoveLogo);
-        
-        footerInput.addEventListener('input', updatePreview);
+
+        // Event listener para download
+        downloadBtn.addEventListener('click', downloadAsPNG);
 
         // --- Inicialização ---
+
+        // Carregar dados salvos e atualizar preview
         loadInputs();
         updatePreview();
-        
-        // Testar conexão com a API
-        setTimeout(() => {
-            apiStatus.textContent = "API PRONTA";
-            apiStatus.className = "api-status connected";
-        }, 1000);
-        
+
+        // Verificar se a API está funcionando
+        window.addEventListener('load', () => {
+            // Testar a API com uma requisição simples
+            fetch('https://api.remove.bg/v1.0/account', {
+                headers: {
+                    'X-Api-Key': PRE_CONFIGURED_API_KEY
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    apiStatus.textContent = "API CONECTADA";
+                    apiStatus.className = "api-status connected";
+                } else {
+                    apiStatus.textContent = "API COM ERRO";
+                    apiStatus.className = "api-status disconnected";
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao verificar API:', error);
+                apiStatus.textContent = "API COM ERRO";
+                apiStatus.className = "api-status disconnected";
+            });
+        });
+
     </script>
 </body>
 </html>
