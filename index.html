@@ -23,7 +23,6 @@
             --ios-text-dark: #000;
             --ios-text-secondary: #555;
             
-            /* Variável para opacidade do fundo, usada no novo <img> */
             --custom-bg-opacity: 1; 
         }
 
@@ -69,7 +68,7 @@
         .settings-card {
             background-color: var(--ios-white);
             border-radius: 12px;
-            padding: 18px;
+            padding: 15px 25px; 
             margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
@@ -114,6 +113,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-sizing: border-box; 
         }
         
         .button-primary {
@@ -198,6 +198,13 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
             cursor: pointer;
         }
+        
+        /* Divisor simples dentro de um card */
+        .card-divider {
+            height: 1px;
+            background-color: var(--ios-border);
+            margin: 20px 0;
+        }
 
         /* --- SEÇÃO DA PRÉ-VISUALIZAÇÃO (Output) --- */
         .preview-container {
@@ -210,23 +217,22 @@
 
         #story-output {
             width: 100%;
-            aspect-ratio: 9 / 16; /* Proporção exata de um Story */
+            aspect-ratio: 9 / 16; 
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            overflow: hidden; /* Importante para o <img> de fundo */
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Distribui o espaço melhor */
+            justify-content: space-between; 
             align-items: center;
-            padding: 15px 25px; /* *** ALTERADO: Reduzido de 20px 25px */
+            padding: 15px 25px; 
             box-sizing: border-box;
             transition: all 0.3s ease-in-out;
             position: relative; 
-            z-index: 1; /* Precisa ter z-index para o z-index -1 do fundo funcionar */
+            z-index: 1; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         
-        /* NOVO: Estilo para a tag <img> que servirá de fundo */
         #output-bg-image {
             position: absolute;
             top: 0;
@@ -235,26 +241,26 @@
             bottom: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Garante que a imagem cubra tudo sem distorcer */
-            z-index: -1; /* Fica atrás de todo o conteúdo */
-            border-radius: inherit; /* Herda o arredondamento do pai */
-            opacity: var(--custom-bg-opacity, 1); /* Usa a variável do slider */
+            object-fit: cover; 
+            z-index: -1; 
+            border-radius: inherit; 
+            opacity: var(--custom-bg-opacity, 1); 
             transition: opacity 0.2s;
         }
         
         #output-logo {
-            display: none; /* Escondido por padrão */
-            max-width: 55%; /* *** ALTERADO: Reduzido de 60% */
-            max-height: 100px; /* *** ALTERADO: Reduzido de 120px */
-            margin: 5px auto 10px auto; /* *** ALTERADO: Margens reduzidas */
+            display: none; 
+            max-width: 55%; 
+            max-height: 100px; 
+            margin: 5px auto 10px auto; 
             object-fit: contain; 
-            z-index: 2; /* Garante que fique acima do fundo */
+            z-index: 2; 
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
         }
         
         #output-title {
             font-weight: 300;
-            font-size: 1.8rem; /* *** ALTERADO: Reduzido de 2rem */
+            font-size: 1.8rem; 
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 0;
@@ -264,80 +270,92 @@
         
         #output-subtitle {
             font-weight: 700;
-            font-size: 1.0rem; /* *** ALTERADO: Reduzido de 1.1rem */
+            font-size: 1.0rem; 
             margin-top: 5px;
-            margin-bottom: 10px; /* *** ALTERADO: Reduzido de 15px */
+            margin-bottom: 10px; 
             z-index: 2;
             text-align: center;
         }
 
         #schedule-list {
             width: 100%;
-            margin-top: 5px; /* *** ALTERADO: Reduzido de 10px */
+            margin-top: 5px; 
             z-index: 2;
-            flex-grow: 1; /* Permite que cresça para ocupar espaço disponível */
+            flex-grow: 1; 
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Centraliza verticalmente */
-            overflow-y: auto; /* Permite rolar se houver muitos itens */
-            -ms-overflow-style: none; /* IE e Edge */
-            scrollbar-width: none; /* Firefox */
+            justify-content: center; 
+            overflow-y: auto; 
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
         }
         
         #schedule-list::-webkit-scrollbar {
-            display: none; /* Chrome, Safari e Opera */
+            display: none; 
         }
         
         #output-footer {
-            font-size: 0.75rem; /* *** ALTERADO: Reduzido de 0.8rem */
+            font-size: 0.75rem; 
             font-weight: 500;
-            margin-top: 10px; /* *** ALTERADO: Reduzido de 15px */
+            margin-top: 10px; 
             text-align: center;
             z-index: 2;
             width: 100%;
             box-sizing: border-box;
             padding: 0 10px;
-            /* *** REMOVIDO: max-height: 40px; */
-            /* *** REMOVIDO: overflow: hidden; */
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0; /* *** ADICIONADO: Impede o rodapé de encolher */
-            line-height: 1.2; /* *** ADICIONADO: Controla a altura */
+            flex-shrink: 0; 
+            line-height: 1.2; 
         }
 
         /* --- ESTILOS DINÂMICOS: LAYOUTS --- */
         
-        .layout-pill #output-title { font-size: 2.0rem; } /* *** ALTERADO: Reduzido de 2.2rem */
+        .layout-pill #output-title { font-size: 2.0rem; } 
         .layout-pill #output-subtitle { display: none; }
         .layout-pill .day-card {
             background-color: var(--card-color);
             color: var(--card-text-color);
-            padding: 12px 18px; /* *** ALTERADO: Reduzido de 14px 20px */
+            padding: 12px 18px; 
             border-radius: 50px; 
-            margin: 6px auto; /* *** ALTERADO: Reduzido de 8px */
+            margin: 6px auto; 
             font-weight: 600;
-            font-size: 1.0rem; /* *** ALTERADO: Reduzido de 1.1rem */
+            font-size: 1.0rem; 
             text-align: center;
             width: 90%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             text-transform: uppercase;
+            box-sizing: border-box; 
+        }
+        
+        .layout-pill .day-card.is-closed {
+            font-size: 0.9rem;
+            font-style: italic;
+            font-weight: 500;
+            text-transform: none; 
+            opacity: 0.7;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px dashed var(--ios-border);
+            box-shadow: none;
         }
 
-        .layout-tag #output-title { font-size: 1.6rem; letter-spacing: 0; } /* *** ALTERADO: Reduzido de 1.8rem */
-        .layout-tag #output-subtitle { font-size: 0.9rem; text-transform: uppercase; } /* *** ALTERADO: Reduzido de 1rem */
+        .layout-tag #output-title { font-size: 1.6rem; letter-spacing: 0; } 
+        .layout-tag #output-subtitle { font-size: 0.9rem; text-transform: uppercase; } 
         .layout-tag .day-card {
             background-color: var(--card-color);
             color: var(--card-text-color);
             padding: 8px 15px; 
             border-radius: 50px; 
-            margin: 4px auto; /* *** ALTERADO: Reduzido de 6px */
+            margin: 4px auto; 
             font-size: 0.9rem; 
             text-align: left;
             width: 100%;
             display: flex;
             align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-sizing: border-box; 
         }
         
         .layout-tag .day-tag {
@@ -355,9 +373,22 @@
             letter-spacing: 0.5px;
         }
         
+        .layout-tag .day-card.is-closed {
+            opacity: 0.7;
+            background-color: transparent;
+            box-shadow: none;
+        }
+        .layout-tag .day-card.is-closed .day-tag {
+            background-color: var(--ios-border);
+            color: var(--ios-text-secondary);
+        }
+        .layout-tag .day-card.is-closed .day-times {
+            font-style: italic;
+            font-weight: 500;
+        }
+        
         /* --- ESTILOS DINÂMICOS: PALETAS DE CORES --- */
         
-        /* Paleta Excelência */
         .palette-excelencia {
             --bg-color: #fcfaf8;
             --text-color: #382e25;
@@ -379,13 +410,18 @@
             background-color: var(--accent-color);
             color: var(--accent-text-color);
         }
-
-        .layout-pill.palette-excelencia #output-title {
-            font-size: 1.8rem; /* *** ALTERADO: Reduzido de 2.0rem */
-            text-align: center; /* Garantia de centralização */
+        
+        .palette-excelencia.layout-pill .day-card.is-closed {
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px dashed var(--accent-color);
         }
 
-        /* Paleta 1: Verde Moderno */
+        .layout-pill.palette-excelencia #output-title {
+            font-size: 1.8rem; 
+            text-align: center; 
+        }
+
         .palette-verde {
             --bg-color: #f7f7f7;
             --text-color: #3d5e50;
@@ -397,7 +433,6 @@
         }
         .palette-verde #output-title { font-weight: 300; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; }
         
-        /* Paleta 2: Rosa Elegante */
         .palette-rosa {
             --bg-color: #fdf6f7;
             --text-color: #7d4a58;
@@ -410,7 +445,6 @@
         .palette-rosa #output-title { font-weight: 700; font-family: 'Times New Roman', Times, serif; }
         .palette-rosa #output-subtitle { color: #d88a9e; }
 
-        /* Paleta 3: Azul Profissional */
         .palette-azul {
             --bg-color: #f5f8fa;
             --text-color: #2c3e50;
@@ -425,7 +459,6 @@
              font-weight: 600;
         }
 
-        /* Paleta 4: Modo Escuro */
         .palette-dark {
             --bg-color: #1c1c1e;
             --text-color: #f2f2f7;
@@ -450,44 +483,6 @@
             font-weight: 500;
         }
 
-        .api-info {
-            background-color: #e8f4ff;
-            border: 1px solid #b6d9ff;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 10px;
-            font-size: 0.8rem;
-        }
-
-        .api-info a {
-            color: var(--ios-blue);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .api-info a:hover {
-            text-decoration: underline;
-        }
-
-        .api-status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        .api-status.connected {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .api-status.disconnected {
-            background-color: #f44336;
-            color: white;
-        }
-
     </style>
 </head>
 <body>
@@ -499,33 +494,33 @@
             <h2>Horários da Semana</h2>
             <div class="input-group">
                 <label for="dia-seg">Segunda</label>
-                <input type="text" id="dia-seg" placeholder="Ex: 9h, 14h, 18h">
+                <input type="text" id="dia-seg" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
             <div class="input-group">
                 <label for="dia-ter">Terça</label>
-                <input type="text" id="dia-ter" placeholder="Ex: 10h - 12h, 14h - 18h">
+                <input type="text" id="dia-ter" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
             <div class="input-group">
                 <label for="dia-qua">Quarta</label>
-                <input type="text" id="dia-qua" placeholder="Ex: 9h, 14h">
+                <input type="text" id="dia-qua" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
             <div class="input-group">
                 <label for="dia-qui">Quinta</label>
-                <input type="text" id="dia-qui" placeholder="Ex: 14h - 19h">
+                <input type="text" id="dia-qui" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
             <div class="input-group">
                 <label for="dia-sex">Sexta</label>
-                <input type="text" id="dia-sex" placeholder="Ex: 9h, 13h, 17h">
+                <input type="text" id="dia-sex" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
             <div class="input-group">
                 <label for="dia-sab">Sábado</label>
-                <input type="text" id="dia-sab" placeholder="Ex: 8h - 12h">
+                <input type="text" id="dia-sab" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
              <div class="input-group">
                 <label for="dia-dom">Domingo</label>
-                <input type="text" id="dia-dom" placeholder="Ex: Fechado">
+                <input type="text" id="dia-dom" placeholder="Ex: 8:00 às 18:00 (ou 'Fechado')" value="8:00 às 18:00">
             </div>
-        </div>
+            </div>
 
         <div class="settings-card">
             <h2>Layout e Cores</h2>
@@ -558,27 +553,19 @@
         </div>
         
         <div class="settings-card">
-            <h2>Logomarca <span id="api-status" class="api-status connected">API CONECTADA</span></h2>
+            <h2>Identidade Visual</h2>
             
-            <div class="input-group">
-                <label for="api-key-input">API Key (remove.bg)</label>
-                <input type="text" id="api-key-input" value="Tm7Lw5Zh5RsQSo11zvuScFVR" readonly style="background-color: #f0f0f0;">
-                <div class="api-info">
-                    ✅ <strong>API Key pré-configurada e funcionando!</strong><br>
-                    O fundo da sua logo será removido automaticamente.
-                </div>
-            </div>
+            <label class="input-group">Logomarca</label>
             <input type="file" id="logo-upload" accept="image/png, image/jpeg, image/jpg">
-            <label for="logo-upload" class="button file-upload-label">📷 Carregar Logo (Fundo será removido automaticamente)</label>
-            <button type="button" id="remove-logo" class="button button-secondary" style="margin-top: 10px; width: 100%;">🗑️ Remover Logo</button>
-        </div>
-        
-        <div class="settings-card">
-            <h2>Plano de Fundo</h2>
-            <input type="file" id="bg-upload" accept="image/*">
-            <label for="bg-upload" class="button file-upload-label">🖼️ Carregar Imagem</label>
+            <label for="logo-upload" class="button file-upload-label">📷 Carregar Logomarca</label>
+            <button type="button" id="remove-logo" class="button button-secondary" style="margin-top: 10px; width: 100%;">🗑️ Remover Logomarca</button>
             
-            <button type="button" id="remove-bg" class="button button-secondary" style="margin-top: 10px; width: 100%;">🗑️ Remover Imagem</button>
+            <div class="card-divider"></div>
+
+            <label class="input-group">Plano de Fundo</label>
+            <input type="file" id="bg-upload" accept="image/*">
+            <label for="bg-upload" class="button file-upload-label">🖼️ Carregar Fundo</label>
+            <button type="button" id="remove-bg" class="button button-secondary" style="margin-top: 10px; width: 100%;">🗑️ Remover Fundo</button>
 
             <label for="bg-opacity" class="input-group" style="margin-top: 20px;">Transparência do Fundo</label>
             <input type="range" id="bg-opacity" min="0" max="1" step="0.1" value="1">
@@ -648,11 +635,7 @@
         const removeLogoBtn = document.getElementById('remove-logo');
         const outputLogo = document.getElementById('output-logo');
         
-        // Input da API Key
-        const apiKeyInput = document.getElementById('api-key-input');
-        const apiStatus = document.getElementById('api-status');
-
-        // API Key pré-configurada
+        // API Key pré-configurada (Oculta para o usuário, usada internamente)
         const PRE_CONFIGURED_API_KEY = "Tm7Lw5Zh5RsQSo11zvuScFVR";
 
         // Nomes dos dias
@@ -688,8 +671,17 @@
                     const card = document.createElement('div');
                     card.className = 'day-card';
                     
+                    const lowerTime = time.toLowerCase();
+                    if (lowerTime === 'fechado' || lowerTime === 'indisponível' || lowerTime === 'fechada') {
+                        card.classList.add('is-closed');
+                    }
+                    
                     if (layout === 'pill') {
-                        card.innerText = `${dayAbbr[key]} | ${time}`;
+                        if (card.classList.contains('is-closed')) {
+                            card.innerText = `${dayNames[key]}: ${time}`;
+                        } else {
+                            card.innerText = `${dayAbbr[key]} | ${time}`;
+                        }
                     } else { // layout === 'tag'
                         const timesText = time.replace(/-/g, ' '); 
                         card.innerHTML = `<span class="day-tag">${dayNames[key]}</span> <span class="day-times">${timesText}</span>`;
@@ -710,11 +702,8 @@
                 localStorage.setItem('agenda_generator_' + key, inputs[key].value);
             }
             localStorage.setItem('agenda_generator_footer', footerInput.value);
-            
-            // Salvar opacidade do fundo
             localStorage.setItem('agenda_generator_bg_opacity', bgOpacitySlider.value);
             
-            // Salvar layout e paleta selecionados
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
             const selectedPalette = document.querySelector('input[name="palette"]:checked').value;
             localStorage.setItem('agenda_generator_layout', selectedLayout);
@@ -724,7 +713,10 @@
         function loadInputs() {
             for (const key in inputs) {
                 const savedValue = localStorage.getItem('agenda_generator_' + key);
-                if (savedValue) {
+                // *** ALTERAÇÃO APLICADA AQUI ***
+                // Se não houver valor salvo, mantém o valor padrão do HTML
+                // Se houver valor salvo, usa o valor salvo
+                if (savedValue !== null) { 
                     inputs[key].value = savedValue;
                 }
             }
@@ -733,14 +725,12 @@
                 footerInput.value = savedFooter;
             }
             
-            // Carregar opacidade do fundo
             const savedOpacity = localStorage.getItem('agenda_generator_bg_opacity');
             if (savedOpacity) {
                 bgOpacitySlider.value = savedOpacity;
                 storyOutput.style.setProperty('--custom-bg-opacity', savedOpacity);
             }
             
-            // Carregar layout e paleta selecionados
             const savedLayout = localStorage.getItem('agenda_generator_layout');
             const savedPalette = localStorage.getItem('agenda_generator_palette');
             
@@ -752,13 +742,11 @@
                 document.getElementById(`palette-${savedPalette}`).checked = true;
             }
             
-            // Carregar imagem de fundo
             const savedBgImage = localStorage.getItem('agenda_generator_bg_image');
             if (savedBgImage) {
                 outputBgImage.src = savedBgImage;
             }
             
-            // Carregar logo
             const savedLogo = localStorage.getItem('agenda_generator_logo');
             if (savedLogo) {
                 outputLogo.src = savedLogo;
@@ -791,15 +779,13 @@
             localStorage.removeItem('agenda_generator_bg_image');
         }
 
-        // FUNÇÃO PARA REMOVER O FUNDO DA LOGO
         async function handleLogoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Mostrar indicador de carregamento
-            loadingIndicator.innerText = "🔄 Removendo fundo da logo...";
+            loadingIndicator.innerText = "🔄 Processando logomarca...";
             loadingIndicator.style.display = 'block';
-            outputLogo.style.display = 'none'; // Esconder enquanto processa
+            outputLogo.style.display = 'none'; 
             logoUpload.disabled = true;
 
             const formData = new FormData();
@@ -816,72 +802,29 @@
                 });
 
                 if (!response.ok) {
-                    let errorMessage = `Erro: ${response.status} ${response.statusText}`;
-                    
-                    // Tentar obter mais detalhes do erro
-                    try {
-                        const errorData = await response.json();
-                        if (errorData.errors && errorData.errors.length > 0) {
-                            errorMessage = `Erro: ${errorData.errors[0].title}`;
-                        }
-                    } catch (e) {
-                        // Se não conseguir parsear o JSON de erro, usar texto simples
-                        const errorText = await response.text();
-                        console.error('Erro da API remove.bg:', errorText);
-                    }
-                    
-                    throw new Error(errorMessage);
+                    throw new Error(`Erro: ${response.status}`);
                 }
 
-                // A resposta é um blob (a imagem processada)
                 const blob = await response.blob();
                 
-                // Verificar se o blob tem dados
                 if (blob.size === 0) {
                     throw new Error('A imagem retornada está vazia');
                 }
                 
-                // Converte o blob para DataURL para poder salvar no localStorage
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const dataUrl = e.target.result;
                     outputLogo.src = dataUrl;
                     outputLogo.style.display = 'block';
-                    localStorage.setItem('agenda_generator_logo', dataUrl); // Salva a imagem SEM fundo
-                    
-                    // Esconde o indicador
-                    loadingIndicator.style.display = 'none';
-                    logoUpload.disabled = false;
-                    
-                    // Atualizar status da API
-                    apiStatus.textContent = "API CONECTADA";
-                    apiStatus.className = "api-status connected";
-                };
-                reader.onerror = () => {
-                    throw new Error('Erro ao processar a imagem sem fundo');
+                    localStorage.setItem('agenda_generator_logo', dataUrl); 
                 };
                 reader.readAsDataURL(blob);
 
             } catch (error) {
                 console.error('Erro ao remover fundo da logo:', error);
                 
-                let userMessage = 'Falha ao remover o fundo da logo. ';
+                alert('Não foi possível remover o fundo da logomarca. Usando a imagem original. Verifique a imagem ou tente novamente.');
                 
-                if (error.message.includes('403') || error.message.includes('Unauthorized')) {
-                    userMessage += 'API Key inválida ou sem créditos. ';
-                    apiStatus.textContent = "API COM ERRO";
-                    apiStatus.className = "api-status disconnected";
-                } else if (error.message.includes('400')) {
-                    userMessage += 'Imagem inválida ou muito pequena. ';
-                } else if (error.message.includes('Network Error') || error.message.includes('Failed to fetch')) {
-                    userMessage += 'Problema de conexão. ';
-                }
-                
-                userMessage += 'Tente novamente com outra imagem.';
-                
-                alert(userMessage);
-                
-                // Fallback: carregar imagem original
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     outputLogo.src = e.target.result;
@@ -891,7 +834,6 @@
                 reader.readAsDataURL(file);
                 
             } finally {
-                // Garantir que o indicador seja escondido
                 setTimeout(() => {
                     loadingIndicator.style.display = 'none';
                     loadingIndicator.innerText = "Gerando imagem...";
@@ -908,26 +850,21 @@
         }
 
         async function downloadAsPNG() {
-            // Remove o foco de qualquer input para não sair na imagem
             document.activeElement.blur(); 
             
-            // Mostrar indicador de carregamento
             loadingIndicator.style.display = 'block';
             downloadBtn.disabled = true;
             
             try {
-                // Aguardar um frame para garantir que o preview foi atualizado
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
-                // Capturar o elemento
                 const canvas = await html2canvas(storyOutput, {
-                    scale: 2, // Maior resolução
-                    useCORS: true, // Para imagens externas
+                    scale: 2, 
+                    useCORS: true, 
                     allowTaint: false,
-                    backgroundColor: null // Fundo transparente
+                    backgroundColor: null 
                 });
                 
-                // Criar link de download
                 const link = document.createElement('a');
                 link.download = 'agenda-da-semana.png';
                 link.href = canvas.toDataURL('image/png');
@@ -937,7 +874,6 @@
                 console.error('Erro ao gerar imagem:', error);
                 alert('Erro ao gerar a imagem. Tente novamente.');
             } finally {
-                // Esconder indicador
                 loadingIndicator.style.display = 'none';
                 downloadBtn.disabled = false;
             }
@@ -945,13 +881,11 @@
 
         // --- Event Listeners ---
 
-        // Atualizar preview quando inputs mudarem
         for (const key in inputs) {
             inputs[key].addEventListener('input', updatePreview);
         }
         footerInput.addEventListener('input', updatePreview);
 
-        // Event listeners para layout e paleta
         for (const radio of layoutRadios) {
             radio.addEventListener('change', updatePreview);
         }
@@ -959,47 +893,19 @@
             radio.addEventListener('change', updatePreview);
         }
 
-        // Event listeners para plano de fundo
         bgUpload.addEventListener('change', handleBgUpload);
         bgOpacitySlider.addEventListener('input', handleOpacityChange);
         removeBgBtn.addEventListener('click', handleRemoveBg);
 
-        // Event listeners para logo
         logoUpload.addEventListener('change', handleLogoUpload);
         removeLogoBtn.addEventListener('click', handleRemoveLogo);
 
-        // Event listener para download
         downloadBtn.addEventListener('click', downloadAsPNG);
 
         // --- Inicialização ---
 
-        // Carregar dados salvos e atualizar preview
         loadInputs();
         updatePreview();
-
-        // Verificar se a API está funcionando
-        window.addEventListener('load', () => {
-            // Testar a API com uma requisição simples
-            fetch('https://api.remove.bg/v1.0/account', {
-                headers: {
-                    'X-Api-Key': PRE_CONFIGURED_API_KEY
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    apiStatus.textContent = "API CONECTADA";
-                    apiStatus.className = "api-status connected";
-                } else {
-                    apiStatus.textContent = "API COM ERRO";
-                    apiStatus.className = "api-status disconnected";
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao verificar API:', error);
-                apiStatus.textContent = "API COM ERRO";
-                apiStatus.className = "api-status disconnected";
-            });
-        });
 
     </script>
 </body>
